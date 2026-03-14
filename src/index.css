@@ -1,0 +1,165 @@
+@import "tailwindcss";
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background-color: #000;
+  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+  user-select: none;
+  -webkit-font-smoothing: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Custom Scrollbar for Lobster Chat */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #111;
+}
+::-webkit-scrollbar-thumb {
+  background: #444;
+}
+
+/* Animations */
+@keyframes pulse-glow {
+  0% { opacity: 0.3; filter: brightness(1); }
+  50% { opacity: 1; filter: brightness(1.5); box-shadow: 0 0 20px #00ff41; }
+  100% { opacity: 0.3; filter: brightness(1); }
+}
+
+@keyframes flicker-fast {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+@keyframes flicker-med {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+@keyframes flicker-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes flash-white {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes scroll-up {
+  0% { transform: translateY(100%); }
+  100% { transform: translateY(-150%); }
+}
+
+/* Utility Classes */
+.pixel-btn {
+  background: #000;
+  color: #fff;
+  border: 2px solid #fff;
+  padding: 10px 15px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.pixel-btn:hover:not(:disabled) {
+  background: #fff;
+  color: #000;
+}
+.pixel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pixel-input {
+  background: #000;
+  color: #00ff41;
+  border: 2px solid #fff;
+  padding: 10px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 14px;
+  outline: none;
+  text-transform: uppercase;
+}
+
+.lobster-panel {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 400px;
+  max-width: calc(100vw - 40px);
+  background: rgba(0, 0, 0, 0.85);
+  border: 2px solid #00ff41;
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  z-index: 50;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+}
+
+@media (max-width: 640px) {
+  .lobster-panel {
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .bridge-overlay {
+    flex-direction: column;
+  }
+  
+  .bridge-left, .bridge-right {
+    border-right: none;
+    border-bottom: 2px solid #333;
+  }
+  
+  .bridge-right {
+    border-left: none;
+    border-bottom: none;
+  }
+}
+
+.bridge-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  z-index: 100;
+  background: #000;
+}
+
+.bridge-left, .bridge-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 2px solid #333;
+  overflow: hidden;
+}
+
+.bridge-right {
+  border-right: none;
+  border-left: 2px solid #333;
+}
+
+.flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  z-index: 110;
+  animation: flash-white 1s forwards;
+  pointer-events: none;
+}
