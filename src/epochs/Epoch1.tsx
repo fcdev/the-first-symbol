@@ -81,7 +81,7 @@ export function Epoch1({
           {`  /\\  /\\  /\\  /\\  \n`}
           {` /  \\/  \\/  \\/  \\ \n`}
           {`/                \\\n`}
-          {`SIGNAL DECODED: LIGHT`}
+          {`信号已解码: LIGHT`}
         </div>
       );
 
@@ -140,7 +140,7 @@ export function Epoch1({
 
   return (
     <div className="absolute inset-0" onClick={handleBgClick}>
-      <div className="absolute top-4 left-4 text-xs text-green-400 z-10">EPOCH I · CHAOS  Task {task === 'A' ? '1' : '2'}/2</div>
+      <div className="absolute top-4 left-4 text-xs text-green-400 z-10">纪元 I · 混沌  任务 {task === 'A' ? '1' : '2'}/2</div>
       {/* Central Light Beam (appears after Task A) */}
       {task === 'B' && (
         <div className={`absolute left-1/2 top-0 bottom-0 w-1 -translate-x-1/2 bg-white shadow-[0_0_20px_#fff] ${lightStable ? '' : 'animate-[flicker-med_0.5s_infinite]'}`} />
@@ -166,7 +166,7 @@ export function Epoch1({
 
           {showInput && (
             <form onSubmit={handleInputSubmit} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-4 items-center w-full px-4">
-              <div className="text-green-400 text-center text-sm sm:text-base">ENTER DECODED SIGNAL:</div>
+              <div className="text-green-400 text-center text-sm sm:text-base">输入解码信号：</div>
               <input 
                 autoFocus
                 className="pixel-input text-center w-full max-w-xs"
@@ -181,7 +181,7 @@ export function Epoch1({
 
       {task === 'B' && !lightStable && (
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[90%] sm:w-3/4 max-w-2xl flex flex-col gap-8 items-center bg-black/80 p-4 sm:p-8 border border-white">
-          <div className="text-[10px] sm:text-xs text-gray-400 mb-4">TARGET RHYTHM: ~ ~ ~ ~ ~</div>
+          <div className="text-[10px] sm:text-xs text-gray-400 mb-4">目标节奏: ~ ~ ~ ~ ~</div>
           
           <div className="flex flex-col gap-6 w-full">
             {['A', 'B', 'C'].map(bar => (
@@ -201,7 +201,7 @@ export function Epoch1({
             disabled={selectedBars.length !== 2}
             onClick={handleConfirmBars}
           >
-            CONFIRM FREQUENCIES
+            确认频率
           </button>
         </div>
       )}

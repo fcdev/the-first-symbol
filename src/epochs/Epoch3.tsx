@@ -80,10 +80,15 @@ export function Epoch3({
     setLobsterMsg(interp.dialogue);
   };
 
+  const handleSkipToNext = () => {
+    updateGameState({ epoch3: { interpretation: interpretation?.label || 'skipped', pixelArt: grid } });
+    setTask('B');
+  };
+
   const handleAcceptArt = () => {
     // TODO: Replace with API call
     setLobsterMsg(EPOCH3_MOCK.taskA.dialogue.accepted);
-    updateGameState({ epoch3: { interpretation: interpretation.label } });
+    updateGameState({ epoch3: { interpretation: interpretation.label, pixelArt: grid } });
 
     const leftVisual = (
       <div className="grid grid-cols-8 gap-1 w-48 h-48">
@@ -93,10 +98,10 @@ export function Epoch3({
 
     const rightData = (
       <div className="text-gray-400 font-mono text-[10px] whitespace-pre">
-        {`SCANNING INPUT MATRIX (8x8)...\n`}
-        {`PIXEL DENSITY: ${grid.filter(c => c).length}/64\n`}
-        {`PATTERN MATCH: ${interpretation.label.toUpperCase()} (confidence 0.89)\n\n`}
-        {`EXTRAPOLATING TO 16x16...`}
+        {`正在扫描输入矩阵 (8x8)...\n`}
+        {`像素密度: ${grid.filter(c => c).length}/64\n`}
+        {`模式匹配: ${interpretation.label.toUpperCase()} (置信度 0.89)\n\n`}
+        {`正在外推至 16x16...`}
       </div>
     );
 
@@ -134,12 +139,12 @@ export function Epoch3({
 
       const rightData = (
         <div className="text-gray-400 font-mono text-[10px] whitespace-pre">
-          {`COMPILING SCENE GRAPH...\n\n`}
+          {`正在编译场景图...\n\n`}
           {Object.entries(layerAssignments).map(([id, depth]) => {
             const layer = EPOCH3_MOCK.taskB.layers.find(l => l.depth === depth)!;
             return `Layer ${depth} (z:${5 - Number(depth)}): ${id}\n  parallax: ${layer.parallax}x | scale: ${layer.scale}\n`;
           }).join('')}
-          {`\nPARALLAX ENABLED: true`}
+          {`\n视差已启用: true`}
         </div>
       );
 
@@ -162,7 +167,7 @@ export function Epoch3({
       className={`absolute inset-0 flex flex-col items-center justify-center transition-all duration-2000 ${task === 'A' ? 'grayscale' : 'grayscale-0'}`}
       onMouseMove={handleMouseMove}
     >
-      <div className="absolute top-4 left-4 text-xs text-gray-400 z-10">EPOCH III · PERCEPTION  Task {task === 'A' ? '1' : '2'}/2</div>
+      <div className="absolute top-4 left-4 text-xs text-gray-400 z-10">纪元 III · 感知  任务 {task === 'A' ? '1' : '2'}/2</div>
 
       {/* Task A: 8x8 Grid */}
       {task === 'A' && (
@@ -203,10 +208,11 @@ export function Epoch3({
           </div>
 
           {!interpretation ? (
-            <button className="pixel-btn w-full sm:w-auto" onClick={handleDoneDrawing}>DONE DRAWING</button>
+            <button className="pixel-btn w-full sm:w-auto" onClick={handleDoneDrawing}>完成绘画</button>
           ) : (
             <div className="flex gap-4 w-full sm:w-auto">
-              <button className="pixel-btn flex-1 sm:flex-none" onClick={handleAcceptArt}>ACCEPT ART</button>
+              <button className="pixel-btn flex-1 sm:flex-none" onClick={handleAcceptArt}>让龙虾渲染</button>
+              <button className="pixel-btn flex-1 sm:flex-none" onClick={handleSkipToNext}>跳过</button>
             </div>
           )}
         </div>
@@ -217,7 +223,7 @@ export function Epoch3({
         <div className="flex flex-col sm:flex-row gap-6 sm:gap-12 w-[95%] max-w-4xl bg-black/80 p-4 sm:p-8 border border-gray-600 overflow-y-auto max-h-[80vh]">
           {/* Elements */}
           <div className="flex flex-col gap-4 w-full sm:w-1/3">
-            <div className="text-[10px] sm:text-xs text-gray-400">ELEMENTS</div>
+            <div className="text-[10px] sm:text-xs text-gray-400">元素</div>
             <div className="grid grid-cols-3 sm:grid-cols-1 gap-2">
               {EPOCH3_MOCK.taskB.elements.map(el => (
                 <div 
@@ -244,12 +250,12 @@ export function Epoch3({
                 </div>
               ))}
             </div>
-            <div className="text-[8px] text-gray-500 sm:hidden">TAP TO ASSIGN LAYER</div>
+            <div className="text-[8px] text-gray-500 sm:hidden">点击分配层级</div>
           </div>
 
           {/* Layers */}
           <div className="flex flex-col gap-2 flex-1">
-            <div className="text-[10px] sm:text-xs text-gray-400">DEPTH LAYERS</div>
+            <div className="text-[10px] sm:text-xs text-gray-400">深度层级</div>
             {EPOCH3_MOCK.taskB.layers.map(layer => (
               <div 
                 key={layer.depth}
@@ -273,7 +279,7 @@ export function Epoch3({
               disabled={Object.keys(layerAssignments).length < 6}
               onClick={handleBuildScene}
             >
-              BUILD SCENE
+              构建场景
             </button>
           </div>
         </div>

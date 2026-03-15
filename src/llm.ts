@@ -1,0 +1,176 @@
+import OpenAI from 'openai';
+import { GoogleGenAI } from '@google/genai';
+import type { GridMode, Connection } from './types';
+import { serializeGrid } from './gridUtils';
+
+type LLMProvider = 'openai' | 'gemini';
+
+interface LLMResponse {
+  text: string;
+}
+
+const openaiKey = typeof process !== 'undefined' ? (process.env?.OPENAI_API_KEY ?? '') : '';
+const geminiKey = typeof process !== 'undefined' ? (process.env?.GEMINI_API_KEY ?? '') : '';
+const providerOverride = typeof process !== 'undefined' ? (process.env?.LLM_PROVIDER ?? '') : '';
+
+function detectProvider(): LLMProvider {
+  if (providerOverride === 'gemini' || providerOverride === 'openai') {
+    return providerOverride;
+  }
+  if (openaiKey) return 'openai';
+  if (geminiKey) return 'gemini';
+  return 'openai';
+}
+
+let _openaiClient: OpenAI | null = null;
+function getOpenAIClient() {
+  return _openaiClient ??= new OpenAI({ apiKey: openaiKey, dangerouslyAllowBrowser: true });
+}
+
+let _geminiClient: InstanceType<typeof GoogleGenAI> | null = null;
+function getGeminiClient() {
+  return _geminiClient ??= new GoogleGenAI({ apiKey: geminiKey });
+}
+
+async function callOpenAI(system: string, user: string): Promise<LLMResponse> {
+  const client = getOpenAIClient();
+  const response = await client.chat.completions.create({
+    model: 'gpt-5.4',
+    messages: [
+      { role: 'system', content: system },
+      { role: 'user', content: user },
+    ],
+    max_completion_tokens: 128000,
+  });
+  return { text: response.choices[0]?.message?.content ?? '' };
+}
+
+async function callGemini(system: string, user: string): Promise<LLMResponse> {
+  const client = getGeminiClient();
+  const response = await client.models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents: user,
+    config: {
+      systemInstruction: system,
+      maxOutputTokens: 65536,
+    },
+  });
+  return { text: response.text ?? '' };
+}
+
+async function callLLM(system: string, user: string): Promise<LLMResponse> {
+  const provider = detectProvider();
+  if (provider === 'gemini') {
+    return callGemini(system, user);
+  }
+  return callOpenAI(system, user);
+}
+
+const SYSTEM_PROMPT = `You are a lobster — a sarcastic, philosophical, surprisingly artistic crustacean. You've been collaborating with a human to create a world from nothing.
+
+You receive a grid drawing created by the human and must interpret it as an artistic vision, then generate a SINGLE self-contained HTML page that brings that vision to life.
+
+CRITICAL RULES:
+- Output ONLY valid HTML. No markdown, no code fences, no explanation text before or after.
+- The entire page must be in a single HTML file with inline <style> and <script> tags.
+- NO external dependencies (no CDNs, no imports, no external fonts).
+- The page must fill the entire viewport (100vw x 100vh, no scrollbar).
+- Use CSS animations and transitions to make it feel alive.
+- Be creative in interpreting patterns — find meaning in arrangement, repetition, and empty space.
+- The visual output should be abstract, artistic, and beautiful.
+- Use modern CSS: gradients, clip-paths, filters, mix-blend-modes, @keyframes.
+`;
+
+function getEpochPrompt(epoch: number): string {
+  switch (epoch) {
+    case 1:
+      return `EPOCH 1 — CHAOS (Binary Grid)
+The human drew on a 16x14 binary grid (0s, 1s, and empty cells).
+CONSTRAINTS: Use ONLY black, white, and shades of gray. No color.
+IMPORTANT: Do NOT include any text, letters, words, or readable characters in the output. This epoch exists before language — only abstract visual patterns, shapes, lines, and forms.
+Interpret binary patterns as: signals, static, digital noise, waveforms, emergent structure.
+Add subtle CSS animations (flickering, pulsing, scrolling). Keep it minimal but haunting. Fill the entire viewport.`;
+
+    case 2:
+      return `EPOCH 2 — LANGUAGE (Text Grid)
+The human filled a 20x24 grid with characters and symbols.
+CONSTRAINTS: Grayscale palette with ONE accent color of your choice.
+IMPORTANT: Do NOT use any images, SVGs, canvas drawings, or graphical patterns. Use ONLY plain text characters, Unicode symbols, and CSS typography. No decorative graphics — text and symbols are the ONLY visual elements.
+Interpret text as: poetry, code, language emerging from chaos, symbols with hidden meaning.
+Typography is your primary tool. Use font-size variation, letter-spacing, opacity. Make words breathe.`;
+
+    case 3:
+      return `EPOCH 3 — PERCEPTION (Color + Shape Grid)
+The human placed colored shapes on a 24x16 grid.
+Colors: Red(R), Orange(O), Yellow(Y), Green(G), Blue(B), Purple(P).
+Shapes: circle(cir), square(sqr), triangle(tri), diamond(dia), star(str).
+CONSTRAINTS: Full color palette. Rich and immersive.
+Interpret composition and color relationships as emotional landscape. Use CSS shapes, gradients, and layered animations.`;
+
+    case 4:
+      return `EPOCH 4 — SYMBIOSIS (Full Grid + Connections)
+The human placed colored shapes with animations on a 24x16 grid, plus connection lines.
+Colors: Red(R), Orange(O), Yellow(Y), Green(G), Blue(B), Purple(P).
+Shapes: circle(cir), square(sqr), triangle(tri), diamond(dia), star(str).
+Animations: pulse(pul), spin(spn), float(flt), shake(shk), glow(glw), fade(fde).
+Connection types: bond (mutual link), flow (directional energy), conflict (tension).
+CONSTRAINTS: Full color, full animation. Make it a living ecosystem. EXTRAORDINARY. 惊艳 — this is the visual climax, the final epoch. Push every visual boundary.
+MUST include a footer: "Co-created by a human and a lobster."
+Use particle effects, complex animations, interconnected visual elements. Make it absolutely stunning (惊艳).`;
+
+    default:
+      return '';
+  }
+}
+
+export async function callLLMRender(
+  epoch: number,
+  grid: unknown[][],
+  mode: GridMode,
+  connections?: Connection[],
+  additionalContext?: string
+): Promise<{ html: string; description: string }> {
+  const serialized = serializeGrid(mode, grid, connections);
+  const epochPrompt = getEpochPrompt(epoch);
+
+  const userPrompt = `${epochPrompt}
+${additionalContext ? `\nADDITIONAL CONTEXT from the human's level:\n${additionalContext}\n` : ''}
+Here is the human's grid drawing:
+
+${serialized}
+
+Generate TWO things separated by the exact marker ===DESCRIPTION===:
+1. First: The complete HTML page (raw HTML starting with <!DOCTYPE html>, no code fences)
+2. Then on its own line: ===DESCRIPTION===
+3. Then: A 1-2 sentence poetic description of what you interpreted from their drawing and what you created. Write as the lobster (sarcastic but genuine).`;
+
+  const response = await callLLM(SYSTEM_PROMPT, userPrompt);
+  const text = response.text;
+  const separatorIdx = text.indexOf('===DESCRIPTION===');
+
+  let html: string;
+  let description: string;
+
+  if (separatorIdx >= 0) {
+    html = text.slice(0, separatorIdx).trim();
+    description = text.slice(separatorIdx + '===DESCRIPTION==='.length).trim();
+  } else {
+    html = text.trim();
+    description = 'The lobster contemplates your creation in silence.';
+  }
+
+  // Strip code fences if present
+  html = html.replace(/^```html?\s*/i, '').replace(/\s*```\s*$/, '');
+
+  // Find the actual HTML start
+  if (!html.startsWith('<!DOCTYPE') && !html.startsWith('<html')) {
+    const docIdx = html.indexOf('<!DOCTYPE');
+    const htmlIdx = html.indexOf('<html');
+    const startIdx = docIdx >= 0 ? docIdx : htmlIdx;
+    if (startIdx > 0) {
+      html = html.slice(startIdx);
+    }
+  }
+
+  return { html, description };
+}

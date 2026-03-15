@@ -13,7 +13,10 @@ No test framework is configured.
 
 ## Environment
 
-Requires `GEMINI_API_KEY` in `.env.local` for Gemini AI calls. The app is designed for Google AI Studio deployment, which injects the key automatically at runtime.
+Requires at least one LLM API key in `.env.local`:
+- `OPENAI_API_KEY` — OpenAI (default provider)
+- `GEMINI_API_KEY` — Google Gemini (fallback)
+- `LLM_PROVIDER` — Optional override: `"openai"` or `"gemini"`
 
 ## Architecture
 

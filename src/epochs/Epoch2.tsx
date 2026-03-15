@@ -60,12 +60,12 @@ export function Epoch2({
 
     const rightData = (
       <div className="text-blue-300 font-mono text-xs whitespace-pre">
-        {`LOGIC GRAPH COMPILED:\n\n`}
+        {`逻辑图谱已编译:\n\n`}
         {`[${names[1]}] ---> [${names[2]}]\n`}
         {`   ^          |\n`}
         {`   |          v\n`}
         {`   ---- [${names[3]}]\n\n`}
-        {`RULE: ${r.label}`}
+        {`法则: ${r.label}`}
       </div>
     );
 
@@ -106,7 +106,7 @@ export function Epoch2({
 
       const rightData = (
         <div className="text-blue-300 font-mono text-[10px] whitespace-pre">
-          {`CONFIG GENERATED:\n\n`}
+          {`配置已生成:\n\n`}
           {EPOCH2_MOCK.taskA.shapes.map(s => (
             `${names[s.id]}.cfg:\n  temperament: ${emotions[s.id]?.param}\n  pulse_rate: ${emotions[s.id]?.pulseRate}\n  movement: ${emotions[s.id]?.movement}\n\n`
           )).join('')}
@@ -119,7 +119,7 @@ export function Epoch2({
 
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center">
-      <div className="absolute top-4 left-4 text-xs text-blue-300 z-10">EPOCH II · LANGUAGE  Task {task === 'A' ? '1' : '2'}/2</div>
+      <div className="absolute top-4 left-4 text-xs text-blue-300 z-10">纪元 II · 语言  任务 {task === 'A' ? '1' : '2'}/2</div>
       
       {/* Shapes Display */}
       <div className="flex flex-wrap sm:flex-nowrap justify-center gap-8 sm:gap-16 mb-8 sm:mb-12 px-4">
@@ -161,7 +161,7 @@ export function Epoch2({
       {/* Task A Rules */}
       {task === 'A' && Object.keys(names).length === 3 && !rule && (
         <div className="flex flex-col gap-4 items-center bg-black/80 p-4 sm:p-6 border border-blue-500 w-[90%] max-w-2xl text-center">
-          <div className="text-xs sm:text-sm text-blue-300 mb-2">CHOOSE A WORLD RULE:</div>
+          <div className="text-xs sm:text-sm text-blue-300 mb-2">选择一条世界法则：</div>
           {EPOCH2_MOCK.taskA.ruleTemplates.map(r => {
             const text = r.template
               .replace('{0}', names[1])
@@ -180,7 +180,7 @@ export function Epoch2({
       {/* Task B Emotions */}
       {task === 'B' && (
         <div className="flex flex-col gap-4 sm:gap-6 items-center bg-black/80 p-4 sm:p-6 border border-blue-500 w-[90%] max-w-md">
-          <div className="text-xs sm:text-sm text-blue-300 text-center">DRAG EMOTIONS TO SHAPES</div>
+          <div className="text-xs sm:text-sm text-blue-300 text-center">将情感拖拽到形状上</div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 w-full">
             {EPOCH2_MOCK.taskB.emotions.map(em => (
               <div 
@@ -199,7 +199,7 @@ export function Epoch2({
             disabled={Object.keys(emotions).length !== 3}
             onClick={handleApplyEmotions}
           >
-            APPLY EMOTIONS
+            赋予情感
           </button>
         </div>
       )}

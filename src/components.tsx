@@ -6,7 +6,7 @@ export function LobsterChat({ message }: { message: string }) {
   const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
-    if (!message) return;
+    if (!message) { setDisplayed(''); return; }
     setDisplayed('');
     setIsTyping(true);
     let i = 0;
@@ -21,6 +21,8 @@ export function LobsterChat({ message }: { message: string }) {
 
     return () => clearInterval(interval);
   }, [message]);
+
+  if (!displayed && !isTyping) return null;
 
   return (
     <div className="lobster-panel">
@@ -55,11 +57,11 @@ export function BridgeOverlay({
   return (
     <div className="bridge-overlay">
       <div className="bridge-left bg-black relative">
-        <div className="absolute top-4 left-4 text-xs text-gray-500">HUMAN [VISUAL]</div>
+        <div className="absolute top-4 left-4 text-xs text-gray-500">人类 [视觉]</div>
         {left}
       </div>
       <div className="bridge-right bg-black relative font-mono">
-        <div className="absolute top-4 left-4 text-xs text-gray-500">LOBSTER [DATA]</div>
+        <div className="absolute top-4 left-4 text-xs text-gray-500">龙虾 [数据]</div>
         {right}
       </div>
       {flashing && <div className="flash" />}
@@ -68,7 +70,7 @@ export function BridgeOverlay({
 }
 
 // --- BACKGROUND CANVAS ---
-export function Background({ epoch }: { epoch: number }) {
+export function Background({ epoch, phase }: { epoch: number; phase?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -92,18 +94,24 @@ export function Background({ epoch }: { epoch: number }) {
 
     const draw = () => {
       if (epoch === 1) {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#00ff41';
-        ctx.font = '15px monospace';
+        if (phase === 'canvas') {
+          // Clean black background during canvas drawing phase
+          ctx.fillStyle = '#000';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        } else {
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = '#00ff41';
+          ctx.font = '15px monospace';
 
-        for (let i = 0; i < drops.length; i++) {
-          const text = Math.random() > 0.5 ? '1' : '0';
-          ctx.fillText(text, i * 20, drops[i] * 20);
-          if (drops[i] * 20 > canvas.height && Math.random() > 0.975) {
-            drops[i] = 0;
+          for (let i = 0; i < drops.length; i++) {
+            const text = Math.random() > 0.5 ? '1' : '0';
+            ctx.fillText(text, i * 20, drops[i] * 20);
+            if (drops[i] * 20 > canvas.height && Math.random() > 0.975) {
+              drops[i] = 0;
+            }
+            drops[i]++;
           }
-          drops[i]++;
         }
       } else if (epoch === 2) {
         ctx.fillStyle = '#0a0e27'; // Navy
@@ -138,7 +146,7 @@ export function Background({ epoch }: { epoch: number }) {
       window.removeEventListener('resize', resize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [epoch]);
+  }, [epoch, phase]);
 
-  return <canvas ref={canvasRef} className="fixed inset-0 -z-10" />;
+  return <canvas ref={canvasRef} className="fixed inset-0 z-0" />;
 }
