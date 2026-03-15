@@ -6,7 +6,7 @@ interface LLMResponse {
 }
 
 const GEMINI_ENDPOINT = '/api/ai/gemini';
-const MODEL_PATH = '/v1beta/models/gemini-2.5-flash:generateContent';
+const MODEL_PATH = '/v1beta/models/gemini-3.1-flash-lite-preview:generateContent';
 
 function isGappProxy(): boolean {
   return typeof (window as any).gapp !== 'undefined' && !(window as any).gapp.__mock;
@@ -42,7 +42,7 @@ async function callLLM(systemPrompt: string, userPrompt: string): Promise<LLMRes
   }
   const client = new GoogleGenAI({ apiKey });
   const response = await client.models.generateContent({
-    model: 'gemini-2.5-flash',
+    model: 'gemini-3.1-flash-lite-preview',
     contents: userPrompt,
     config: {
       systemInstruction: systemPrompt,
