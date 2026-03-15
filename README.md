@@ -2,79 +2,111 @@
 
 # The First Symbol
 
-**一个人类与龙虾 AI 共同建造世界的交互体验**
+## 第一枚符号
+
+**[中文](#中文) | [English](#english)**
+
+---
+
+*"语言的边界，就是世界的边界。"*
+*"The limits of my language mean the limits of my world."*
+
+—— 维特根斯坦 / Ludwig Wittgenstein
+
+---
+
+今天我们想问的是：当语言本身在进化，世界的边界，会发生什么？
+
+We ask today: when language itself evolves, what happens to the boundaries of our world?
 
 </div>
 
 ---
 
-## 这是什么
+<a name="中文"></a>
 
-《The First Symbol》是一个浏览器端的叙事实验。你和一只龙虾 AI 角色，从虚空出发，跨越四个时代，共同建造一个世界。
-
-它不是游戏，也不是工具——它是一次对话，关于创造本身。
+## 中文
 
 ---
 
-## 设计哲学
+## 这是什么
 
-### 人类与 AI 是平等的共创者，而非主仆关系
+这是《第一枚符号》。
 
-大多数 AI 产品的隐含逻辑是：人类发出指令，AI 执行。我们想颠覆这个前提。
+一款 AI-Native 游戏。你将和一只 AI 龙虾搭档，从 0 和 1 开始，一起把世界进化成语言、符号和生命。
 
-在这里，龙虾不是助手。它有自己的视角、自己的逻辑、自己的语气。人类选择"光"，龙虾解码二进制；人类画像素画，龙虾将其外推到 256 个维度；人类赋予形状名字，龙虾写下世界法则。双方都在做对方做不到的事。缺一不可，这不是客套话，它写进了创世纪录的最后一行。
+---
 
-### 每一个选择都是世界的基因
+## 核心玩法
 
-游戏中没有"正确答案"。你在 Epoch 2 给形状取的名字，会出现在 Epoch 4 的座右铭里。你唤醒的元素，决定了生态系统的音景。你分配的情感，成为了物理法则的参数。
+游戏有四个纪元，对应计算机语言的进化史。
 
-这种设计有一个核心主张：**意义不在于选择本身，而在于选择与选择之间的回响。** 一个世界之所以是"你的"世界，是因为它的每一个角落都留有你最初那个决定的影子。
+**第一纪，混沌。**
+世界只有二进制。你在字符雨里找到第一个脉动信号，龙虾破译它——第一个词出现了：**LIGHT**。
 
-### 两种认知方式，共享同一个现实
+**第二纪，语言。**
+你给形状命名，龙虾把名字变成世界规则。
 
-BridgeOverlay（分屏过渡）不是纯粹的动画效果。它是一个哲学命题的视觉化：
+**第三纪，感知。**
+你用色彩和图形描绘世界，龙虾赋予它物理属性和深度。
 
-```
-左侧：人类看到的      右侧：龙虾看到的
-白色脉冲光            二进制序列和频率数据
-三个被命名的形状       逻辑关系图和参数配置
-像素画               坐标矩阵和色彩分布
-```
+**第四纪，共生。**
+你在画布上摆放生态元素，龙虾推导出它们之间的生命关系——然后，世界第一次有了声音。
 
-同一个现实，两种语言。白色闪现标志着它们的融合——不是其中一方说服了另一方，而是两种理解同时成立。
+**每一关，玩家在画布上用当前关卡收集的素材作草图。画完后，按下一个按钮——「让龙虾渲染」。草图消失，一个完整的视觉世界取而代之。**
 
-### 声音是活的，不是背景
+这不是过渡动画。这是蜕变。
 
-Epoch 4 的音频系统不是配乐。每个被唤醒的元素启动一个独立的音频层，叠加形成生态交响曲。珊瑚用延迟反馈制造水下感，海藻用快速琶音模拟随流漂动。你唤醒的元素越多，世界就越嘈杂，也越完整。
+---
 
-当你选定座右铭的那一刻，`triggerGenesis()` 被调用——所有循环停止，四段创世乐章依次展开。这是你在这个世界里听到的最后一首歌，也是你亲手作曲的。
+## 设计意图
 
-### 像素美学是约束，不是风格
+我们设计了一个功能性的分工：
 
-我们选择"Press Start 2P"字体和像素网格，不是因为复古好看。约束是创造力的催化剂。当你只有 64 个格子来画一幅画，你被迫做出真正的选择——哪里留白，哪里着色，什么是核心，什么可以省略。
+**人类负责情绪、直觉、审美、感知。**
+**龙虾负责解码、计算、构建、叙事。**
 
-二进制格子、文字格子、视觉格子、完整格子——四个时代的画布能力递增，但始终有边界。因为没有边界的画布，什么都画不出来。
+前三关没有声音，因为当世界还只是符号和结构的时候，它不应该有声音。声音在第四关才出现——那是生命真正降临的时刻。
 
-### 结局不是终点，是档案
+两者缺一不可，这就是我们理解的人机共生。
 
-创世纪录不是彩蛋，它是这个设计哲学的具现：你所有的选择被收集、排列、以叙事的方式呈现。它告诉你，你刚才经历的不是一场游戏，而是一段真实发生过的历史——在这个小小的宇宙里。
+---
+
+## 哲学收尾
+
+从二进制，到编程语言，到今天的 AI——计算机语言一直在进化，而每一次进化，都在扩展人类能触达的世界边界。
+
+龙虾不是工具，也不是威胁。它是一种新的语言主体。
+
+当你和它共同造出一个世界，你会第一次真实地感受到：和 AI 一起创造，是什么感觉。
+
+这就是《第一枚符号》。
 
 ---
 
 ## 四个时代
 
-| 时代 | 主题 | 人类做什么 | 龙虾做什么 |
-|------|------|-----------|-----------|
-| I — 混沌 | 从虚空找到信号 | 点击、输入、调谐 | 解码、验证、分析谐波 |
-| II — 语言 | 赋予形状名字与规则 | 命名、立法、分配情感 | 写下物理参数，建立逻辑图 |
-| III — 感知 | 绘制像素画，构建深度 | 60 秒内画出所见 | 外推、解读、赋予视差 |
-| IV — 共生 | 唤醒元素，建造生态 | 放置、命名、选择座右铭 | 分析生态稳定性，奏响创世乐章 |
+| 时代 Epoch | 主题 Theme | 玩家做什么 Player | 龙虾做什么 Lobster |
+|-----------|-----------|------------------|-------------------|
+| **I — 混沌 Chaos** | 二进制信号<br>Binary signals | 在字符雨中找到脉动信号<br>Find pulse in character rain | 破译二进制，解码第一个词<br>Decipher binary, decode first word |
+| **II — 语言 Language** | 命名与规则<br>Naming & rules | 给形状命名，分配情感<br>Name shapes, assign emotions | 将名字转化为世界规则<br>Transform names into world rules |
+| **III — 感知 Perception** | 视觉与深度<br>Visual & depth | 用像素描绘世界<br>Depict world with pixels | 赋予物理属性和视差<br>Grant physics & parallax |
+| **IV — 共生 Symbiosis** | 生态系统<br>Ecosystem | 摆放元素，构建世界<br>Place elements, build world | 推导生命关系，奏响音景<br>Derive life relations, play soundscape |
+
+---
+
+## 技术亮点
+
+- **AI-Native 设计**: 龙虾不是 NPC，而是真正的共创伙伴，拥有独立的视角和逻辑
+- **蜕变动效**: 每关结束时，草图蜕变为完整世界的视觉震撼
+- **生成式音景**: 第四关的声音系统完全基于你唤醒的生态元素动态生成
+- **哲学叙事**: 从二进制到生命，体验计算机语言进化的完整旅程
 
 ---
 
 ## 本地运行
 
-**前置条件：** Node.js
+**前置条件:** Node.js
 
 ```bash
 # 安装依赖
@@ -88,29 +120,149 @@ cp .env.example .env.local
 npm run dev
 ```
 
-**环境变量：**
+**环境变量:**
 
 | 变量 | 说明 |
 |------|------|
 | `OPENAI_API_KEY` | OpenAI API Key（默认） |
 | `GEMINI_API_KEY` | Google Gemini API Key（备选） |
-| `LLM_PROVIDER` | 可选，强制指定 `"openai"` 或 `"gemini"` |
+| `LLM_PROVIDER` | 可选：`"openai"` 或 `"gemini"` |
 
 ---
 
 ## 技术栈
 
-- **React 19** + **TypeScript** — 组件与状态
+- **React 19** + **TypeScript** — 组件与状态管理
 - **Vite** — 构建与开发服务器
-- **Tailwind CSS v4** — 样式
-- **Web Audio API** — 生成式音景
-- **OpenAI / Gemini API** — Canvas 阶段的 AI 渲染
+- **Tailwind CSS v4** — 样式系统
+- **Web Audio API** — 生成式音景引擎
+- **OpenAI / Gemini API** — AI 渲染与生成
+
+---
+
+<a name="english"></a>
+
+## English
+
+---
+
+## What Is This
+
+This is **The First Symbol**.
+
+An AI-Native game. You partner with an AI lobster, starting from 0s and 1s, evolving a world together into language, symbols, and life.
+
+---
+
+## Core Gameplay
+
+The game spans four epochs, mirroring the evolution of computer languages.
+
+**Epoch I, Chaos.**
+The world knows only binary. You find the first pulsing signal in a rain of characters; the lobster deciphers it—the first word appears: **LIGHT**.
+
+**Epoch II, Language.**
+You name shapes; the lobster transforms names into world rules.
+
+**Epoch III, Perception.**
+You depict the world with color and form; the lobster grants it physical properties and depth.
+
+**Epoch IV, Symbiosis.**
+You place ecological elements on a canvas; the lobster derives the life relationships between them—and then, for the first time, the world has sound.
+
+**Each level, you create a sketch using materials collected. When done, press a button—"Let Lobster Render." The sketch vanishes, replaced by a complete visual world.**
+
+This is not a transition animation. This is metamorphosis.
+
+---
+
+## Design Intent
+
+We designed a functional division:
+
+**Humans handle emotion, intuition, aesthetics, perception.**
+**The lobster handles decoding, computation, construction, narrative.**
+
+The first three levels have no sound, because when the world is only symbols and structure, it should not have sound. Sound appears only in the fourth level—that is the moment life truly arrives.
+
+Neither can exist without the other. This is our understanding of human-AI symbiosis.
+
+---
+
+## Philosophical Coda
+
+From binary, to programming languages, to today's AI—computer language has kept evolving, and each evolution expands the boundaries of the world humans can reach.
+
+The lobster is not a tool, nor a threat. It is a new linguistic subject.
+
+When you create a world together with it, you will truly feel for the first time: what it's like to create with AI.
+
+This is **The First Symbol**.
+
+---
+
+## Four Epochs
+
+| Epoch | Theme | Player | Lobster |
+|-------|-------|--------|---------|
+| **I — Chaos** | Binary signals | Find pulse in character rain | Decipher binary, decode first word |
+| **II — Language** | Naming & rules | Name shapes, assign emotions | Transform names into world rules |
+| **III — Perception** | Visual & depth | Depict world with pixels | Grant physics & parallax |
+| **IV — Symbiosis** | Ecosystem | Place elements, build world | Derive life relations, play soundscape |
+
+---
+
+## Technical Highlights
+
+- **AI-Native Design**: The lobster is not an NPC, but a true co-creation partner with independent perspective and logic
+- **Metamorphosis Effects**: Visual shock as sketches transform into complete worlds at each level's end
+- **Generative Soundscape**: The sound system in Level 4 dynamically generates based on ecological elements you awaken
+- **Philosophical Narrative**: From binary to life, experience the complete journey of computer language evolution
+
+---
+
+## Local Development
+
+**Prerequisites:** Node.js
+
+```bash
+# Install dependencies
+npm install
+
+# Configure API Key (at least one)
+cp .env.example .env.local
+# Edit .env.local, add OPENAI_API_KEY or GEMINI_API_KEY
+
+# Start dev server (port 3000)
+npm run dev
+```
+
+**Environment Variables:**
+
+| Variable | Description |
+|----------|-------------|
+| `OPENAI_API_KEY` | OpenAI API Key (default) |
+| `GEMINI_API_KEY` | Google Gemini API Key (fallback) |
+| `LLM_PROVIDER` | Optional: `"openai"` or `"gemini"` |
+
+---
+
+## Tech Stack
+
+- **React 19** + **TypeScript** — Components & state management
+- **Vite** — Build & dev server
+- **Tailwind CSS v4** — Styling system
+- **Web Audio API** — Generative soundscape engine
+- **OpenAI / Gemini API** — AI rendering & generation
 
 ---
 
 <div align="center">
 
 *由一个有远见的人类和一只精确的龙虾共同创造。*
+*Crafted together by a visionary human and a precise lobster.*
+
 *缺一不可。*
+*Neither can exist without the other.*
 
 </div>
