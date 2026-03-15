@@ -31,8 +31,8 @@ function mapEpoch1(gameState: Record<string, any>): CanvasMapping {
     preSeededGrid: grid,
     additionalPrompt: `The human found a signal pulse in the void and tuned frequencies ${bars.join('+')}. The grid has scattered binary fragments — raw chaos before language exists. Interpret the binary patterns as pure abstract forms. No text, no letters, no words — only pattern, rhythm, and contrast.`,
     narration: [
-      "You found the signal and tuned the frequencies. Now let's shape the chaos.",
-      "Place 1s and 0s — make patterns, make noise. No words yet, just raw binary.",
+      "你找到了信号，调谐了频率。现在来塑造混沌吧。",
+      "放置1和0——制造图案，制造噪音。还没有文字，只有原始的二进制。",
     ],
   };
 }
@@ -52,8 +52,8 @@ function mapEpoch2(gameState: Record<string, any>): CanvasMapping {
     preSeededGrid: grid,
     additionalPrompt: `Shapes: ${names.join(', ')}. Rule: ${rule}. Emotions: ${emotionStr || 'unassigned'}. The shape names are pre-filled in the text grid. Weave these names and their relationships into your typographic interpretation.`,
     narration: [
-      `${names.join(', ')} — your shapes have names, rules, and feelings now.`,
-      "Arrange symbols around them. I'll translate your language into art.",
+      `${names.join('、')} —— 你的形状现在有了名字、规则和感情。`,
+      "在它们周围排列符号。我会把你的语言翻译成艺术。",
     ],
   };
 }
@@ -72,8 +72,8 @@ function mapEpoch3(gameState: Record<string, any>): CanvasMapping {
     preSeededGrid: grid,
     additionalPrompt: `Drew "${interpretation}" in pixels. Depths: ${layerInfo || 'unassigned'}. The grid has a seed cluster representing the interpretation. Expand on this visual theme with your own artistic additions.`,
     narration: [
-      `Your "${interpretation}" painting gave this world its first colors.`,
-      "Add more shapes, or let the lobster take it from here.",
+      `你的「${interpretation}」画作给了这个世界第一抹色彩。`,
+      "添加更多形状，或者让龙虾来接手。",
     ],
   };
 }
@@ -91,8 +91,8 @@ function mapEpoch4(gameState: Record<string, any>): CanvasMapping {
     preSeededGrid: grid,
     additionalPrompt: `Ecosystem: ${itemList || 'empty'}. World: "${worldName}". Motto: "${motto}". The grid is pre-populated with ecosystem elements. This is the final epoch — make it extraordinary (惊艳). The ecosystem should feel alive, interconnected, and absolutely stunning.`,
     narration: [
-      `"${worldName}" — your ecosystem awaits its final form.`,
-      "The grid holds your creatures. Shape their world one last time.",
+      `「${worldName}」—— 你的生态系统等待着最终的形态。`,
+      "网格中承载着你的造物。最后一次塑造它们的世界。",
     ],
   };
 }

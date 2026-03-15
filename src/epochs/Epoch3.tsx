@@ -1,19 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { EPOCH3_MOCK } from '../mockData';
 
-export function Epoch3({ 
-  setLobsterMsg, 
-  triggerBridge, 
+export function Epoch3({
+  setLobsterMsg,
+  triggerBridge,
   onComplete,
-  updateGameState
-}: { 
+  updateGameState,
+  gameState,
+}: {
   setLobsterMsg: (msg: string) => void,
   triggerBridge: (l: React.ReactNode, r: React.ReactNode, cb: () => void) => void,
   onComplete: () => void,
-  updateGameState: (data: any) => void
+  updateGameState: (data: any) => void,
+  gameState?: Record<string, any>,
 }) {
   const [task, setTask] = useState<'A' | 'B'>('A');
-  
+
   // Task A State
   const [grid, setGrid] = useState<string[]>(Array(64).fill(null));
   const [activeColor, setActiveColor] = useState(EPOCH3_MOCK.taskA.palette[0]);
@@ -26,6 +28,20 @@ export function Epoch3({
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [parallaxEnabled, setParallaxEnabled] = useState(false);
 
+  // Ref to always have the latest grid in timer callbacks (avoids stale closure)
+  const gridRef = useRef(grid);
+  useEffect(() => { gridRef.current = grid; }, [grid]);
+
+  // Resolve shape names from previous epoch (replaces {{shape1Name}} placeholders)
+  const shapeNames = gameState?.epoch2?.shapeNames as string[] | undefined;
+  const elements = useMemo(() => EPOCH3_MOCK.taskB.elements.map(el => ({
+    ...el,
+    label: el.label
+      .replace('{{shape1Name}}', shapeNames?.[0] || '形状一')
+      .replace('{{shape2Name}}', shapeNames?.[1] || '形状二')
+      .replace('{{shape3Name}}', shapeNames?.[2] || '形状三'),
+  })), [shapeNames]);
+
   useEffect(() => {
     if (task === 'A') {
       // TODO: Replace with API call
@@ -36,48 +52,52 @@ export function Epoch3({
     }
   }, [task]);
 
+  // Timer: countdown only — no stale closures, no handleDoneDrawing inside updater
   useEffect(() => {
-    if (task === 'A' && timeLeft > 0 && !interpretation) {
-      const timer = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev === 30) setLobsterMsg(EPOCH3_MOCK.taskA.dialogue.halfway); // TODO: Replace with API call
-          if (prev === 10) setLobsterMsg(EPOCH3_MOCK.taskA.dialogue.tenSec); // TODO: Replace with API call
-          if (prev <= 1) {
-            clearInterval(timer);
-            handleDoneDrawing();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(timer);
-    }
+    if (task !== 'A' || interpretation) return;
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev === 30) setLobsterMsg(EPOCH3_MOCK.taskA.dialogue.halfway);
+        if (prev === 10) setLobsterMsg(EPOCH3_MOCK.taskA.dialogue.tenSec);
+        return prev <= 1 ? 0 : prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
   }, [task, interpretation]);
 
-  const handleCellClick = (index: number) => {
+  // Separate effect: handle timer expiry via timeLeft reaching 0
+  const handleDoneDrawing = useCallback(() => {
     if (interpretation) return;
-    const newGrid = [...grid];
-    newGrid[index] = activeColor === 'ERASE' ? null : activeColor;
-    setGrid(newGrid);
-  };
-
-  const handleDoneDrawing = () => {
-    if (interpretation) return;
-    
-    // Mock analysis
-    const filled = grid.filter(c => c !== null).length;
-    let interp = EPOCH3_MOCK.taskA.interpretations[3]; // default
+    const currentGrid = gridRef.current;
+    const filled = currentGrid.filter(c => c !== null).length;
+    let interp = EPOCH3_MOCK.taskA.interpretations[3]; // default: abstract
     if (filled > 0) {
-      const counts = grid.reduce((acc, c) => { if (c) acc[c] = (acc[c] || 0) + 1; return acc; }, {} as Record<string, number>);
+      const counts = currentGrid.reduce((acc: Record<string, number>, c) => {
+        if (c) acc[c] = (acc[c] || 0) + 1;
+        return acc;
+      }, {});
       const dominant = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
       if (dominant === '#2ECC71') interp = EPOCH3_MOCK.taskA.interpretations[0];
       else if (dominant === '#3498DB') interp = EPOCH3_MOCK.taskA.interpretations[1];
       else if (dominant === '#FF6B6B') interp = EPOCH3_MOCK.taskA.interpretations[2];
     }
-    
     setInterpretation(interp);
-    // TODO: Replace with API call
     setLobsterMsg(interp.dialogue);
+  }, [interpretation]);
+
+  useEffect(() => {
+    if (task === 'A' && timeLeft === 0 && !interpretation) {
+      handleDoneDrawing();
+    }
+  }, [timeLeft, task, interpretation, handleDoneDrawing]);
+
+  const handleCellClick = (index: number) => {
+    if (interpretation) return;
+    const nextColor = activeColor === 'ERASE' ? null : activeColor;
+    if (grid[index] === nextColor) return;
+    const newGrid = [...grid];
+    newGrid[index] = nextColor;
+    setGrid(newGrid);
   };
 
   const handleSkipToNext = () => {
@@ -130,7 +150,7 @@ export function Epoch3({
             return (
               <div key={id} className="absolute inset-0 flex items-center justify-center transition-transform duration-1000"
                    style={{ transform: `scale(${layer.scale})`, opacity: layer.opacity }}>
-                <div className="text-2xl">{EPOCH3_MOCK.taskB.elements.find(e => e.id === id)?.icon}</div>
+                <div className="text-2xl">{elements.find(e => e.id === id)?.icon}</div>
               </div>
             );
           })}
@@ -142,7 +162,7 @@ export function Epoch3({
           {`正在编译场景图...\n\n`}
           {Object.entries(layerAssignments).map(([id, depth]) => {
             const layer = EPOCH3_MOCK.taskB.layers.find(l => l.depth === depth)!;
-            return `Layer ${depth} (z:${5 - Number(depth)}): ${id}\n  parallax: ${layer.parallax}x | scale: ${layer.scale}\n`;
+            return `层级 ${depth} (z:${5 - Number(depth)}): ${id}\n  视差: ${layer.parallax}x | 缩放: ${layer.scale}\n`;
           }).join('')}
           {`\n视差已启用: true`}
         </div>
@@ -153,6 +173,18 @@ export function Epoch3({
         setTimeout(onComplete, 3000);
       });
     }, 2000);
+  };
+
+  // Touch move: find which grid cell the finger is over and paint it
+  const handleGridTouchMove = (e: React.TouchEvent) => {
+    if (!isDrawing) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    const el = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement | null;
+    const indexStr = el?.dataset.cellIndex;
+    if (indexStr !== undefined) {
+      handleCellClick(parseInt(indexStr, 10));
+    }
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -186,17 +218,20 @@ export function Epoch3({
             </div>
 
             {/* Grid */}
-            <div 
+            <div
               className="grid grid-cols-8 gap-[1px] bg-gray-800 border-2 border-gray-600"
+              style={{ touchAction: 'none' }}
               onMouseDown={() => setIsDrawing(true)}
               onMouseUp={() => setIsDrawing(false)}
               onMouseLeave={() => setIsDrawing(false)}
               onTouchStart={() => setIsDrawing(true)}
               onTouchEnd={() => setIsDrawing(false)}
+              onTouchMove={handleGridTouchMove}
             >
               {grid.map((c, i) => (
-                <div 
-                  key={i} 
+                <div
+                  key={i}
+                  data-cell-index={i}
                   className="w-8 h-8 sm:w-10 sm:h-10 cursor-pointer"
                   style={{ backgroundColor: c || '#000' }}
                   onMouseDown={() => handleCellClick(i)}
@@ -225,7 +260,7 @@ export function Epoch3({
           <div className="flex flex-col gap-4 w-full sm:w-1/3">
             <div className="text-[10px] sm:text-xs text-gray-400">元素</div>
             <div className="grid grid-cols-3 sm:grid-cols-1 gap-2">
-              {EPOCH3_MOCK.taskB.elements.map(el => (
+              {elements.map(el => (
                 <div 
                   key={el.id}
                   draggable
@@ -267,7 +302,7 @@ export function Epoch3({
                 <div className="absolute left-2 sm:left-4 text-[8px] sm:text-[10px] text-gray-500">L{layer.depth}</div>
                 <div className="flex gap-2 sm:gap-4 ml-8 sm:ml-32 overflow-x-auto">
                   {Object.entries(layerAssignments).filter(([_, d]) => d === layer.depth).map(([id]) => {
-                    const el = EPOCH3_MOCK.taskB.elements.find(e => e.id === id);
+                    const el = elements.find(e => e.id === id);
                     return <div key={id} className="text-xl sm:text-2xl shrink-0" style={{ transform: `scale(${layer.scale})`, opacity: layer.opacity }}>{el?.icon}</div>;
                   })}
                 </div>
@@ -290,7 +325,7 @@ export function Epoch3({
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {Object.entries(layerAssignments).map(([id, depth]) => {
             const layer = EPOCH3_MOCK.taskB.layers.find(l => l.depth === depth)!;
-            const el = EPOCH3_MOCK.taskB.elements.find(e => e.id === id);
+            const el = elements.find(e => e.id === id);
             // Randomize initial positions for a nice spread
             const seed = id.charCodeAt(0);
             const top = 20 + (seed % 60) + '%';

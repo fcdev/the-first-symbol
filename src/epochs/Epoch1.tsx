@@ -121,7 +121,7 @@ export function Epoch1({
         const rightData = (
           <div className="text-green-400 font-mono text-sm">
             f(t) = sin(10πt) + sin(2πt)<br/><br/>
-            HARMONIC CONVERGENCE:<br/>
+            谐波收敛：<br/>
             [||||||||||||||||||||] 100%
           </div>
         );

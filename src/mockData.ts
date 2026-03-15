@@ -73,25 +73,25 @@ export const EPOCH3_MOCK = {
     timeLimit: 60,
     interpretations: [
       {
-        label: "tree",
+        label: "一棵树",
         condition: "greenDominant",
         dialogue: "我看到...一棵树。或者可能是一朵困惑的蘑菇。让我拓展你的视野。",
         grid16: "TREE_16X16_PATTERN"
       },
       {
-        label: "fish",
+        label: "一条鱼",
         condition: "blueDominant",
         dialogue: "那要么是一条鱼，要么是一颗极具空气动力学的土豆。我选鱼。",
         grid16: "FISH_16X16_PATTERN"
       },
       {
-        label: "coral",
+        label: "珊瑚",
         condition: "redDominant",
         dialogue: "珊瑚。海洋的建筑。对人类来说还不错。",
         grid16: "CORAL_16X16_PATTERN"
       },
       {
-        label: "abstract",
+        label: "抽象形状",
         condition: "default",
         dialogue: "我完全不知道这是什么。但我尊重这种混沌。让我赋予它意义。",
         grid16: "ABSTRACT_16X16_PATTERN"

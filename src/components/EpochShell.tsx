@@ -96,7 +96,7 @@ export function EpochShell({ config, setLobsterMsg, onComplete, isLastEpoch, pre
     onComplete({
       epoch: config.epoch,
       html: '',
-      description: 'Skipped',
+      description: '已跳过',
       userGrid: grid,
       gridMode: config.mode,
       gridWidth: config.gridWidth,

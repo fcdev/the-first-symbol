@@ -204,7 +204,7 @@ class AudioEngine {
   }
 
   public triggerGenesis() {
-    if (!this.ctx || !this.masterGain || this.isMuted) return;
+    if (!this.ctx || !this.masterGain || this.isMuted || this.isGenesis) return;
     this.isGenesis = true;
 
     // Stop all layer loops first

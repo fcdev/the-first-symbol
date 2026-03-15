@@ -123,6 +123,120 @@ Use particle effects, complex animations, interconnected visual elements. Make i
   }
 }
 
+export async function callLLMEcosystemRender(
+  placedItems: Array<{type: string; x: number; y: number; icon: string}>,
+  awakenedElements: string[],
+  gameState: Record<string, any>,
+  itemDefs: Array<{id: string; label: string; color: string; icon: string}>
+): Promise<{ html: string; description: string }> {
+  // Build rich item descriptions with Chinese labels, colors, and positions
+  const canvasW = 640;
+  const canvasH = 320;
+  const itemDescriptions = placedItems.map((item, i) => {
+    const def = itemDefs.find(d => d.id === item.type);
+    const label = def?.label || item.type;
+    const color = def?.color || '#fff';
+    const xPct = Math.round((item.x / canvasW) * 100);
+    const yPct = Math.round((item.y / canvasH) * 100);
+    return `  ${i + 1}. ${item.icon} ${label} (${item.type}) — 颜色 ${color}, 位置: 左${xPct}% 上${yPct}%`;
+  }).join('\n');
+
+  // Count how many of each type
+  const typeCounts: Record<string, number> = {};
+  for (const item of placedItems) {
+    typeCounts[item.type] = (typeCounts[item.type] || 0) + 1;
+  }
+  const typeCountStr = Object.entries(typeCounts)
+    .map(([type, count]) => {
+      const def = itemDefs.find(d => d.id === type);
+      return `${def?.icon || ''} ${def?.label || type} ×${count}`;
+    }).join(', ');
+
+  // Gather all epoch context
+  const shapeNames = gameState.epoch2?.shapeNames?.join('、') || '未知';
+  const rule = gameState.epoch2?.chosenRule?.label || '未知';
+  const emotions: Array<{label: string; color: string}> = gameState.epoch2?.emotions || [];
+  const emotionStr = emotions.map(e => e.label).join('、') || '未知';
+  const interpretation = gameState.epoch3?.interpretation || '抽象形状';
+
+  const epochPrompt = `EPOCH 4 — SYMBIOSIS: The Final Ecosystem
+
+You are the lobster AI. A human has collaborated with you across 4 epochs to build a world from nothing. Now you must render their final ecosystem as a stunning HTML page.
+
+== WORLD HISTORY ==
+Epoch 1 (Chaos): The human found a signal in the void. The first word was LIGHT.
+Epoch 2 (Language): Three shapes were named「${shapeNames}」. The world's rule is「${rule}」. Their emotions:「${emotionStr}」.
+Epoch 3 (Perception): The human drew「${interpretation}」in pixels. You extrapolated it to 256 pixels and built depth.
+Epoch 4 (Symbiosis): The human awakened ${awakenedElements.length} elements and placed ${placedItems.length} into an ecosystem.
+
+== ECOSYSTEM LAYOUT ==
+The human placed these elements on a canvas (viewport-sized, treat positions as percentages):
+
+${itemDescriptions}
+
+Summary: ${typeCountStr}
+
+== ELEMENT REFERENCE ==
+Each element type and its signature color:
+${itemDefs.map(d => `  ${d.icon} ${d.label} (${d.id}): ${d.color}`).join('\n')}
+
+== YOUR TASK ==
+Create a SINGLE self-contained HTML page that brings this ecosystem to life.
+
+CRITICAL RULES:
+- Output ONLY valid HTML. No markdown, no code fences, no explanation.
+- Single HTML file with inline <style> and <script>. NO external dependencies.
+- The page MUST fill the entire viewport (100vw x 100vh, no scrollbar).
+
+VISUAL REQUIREMENTS:
+- Deep ocean / underwater atmosphere with dark blue gradient background.
+- Render EVERY placed element at its approximate position (use the percentage positions).
+- Each element should be rendered as stylized CSS art using its signature color — not just emoji text.
+  Examples: coral as branching structures, kelp as swaying fronds, fish as animated shapes, bubbles as translucent circles, rocks as solid forms, shells as spiral shapes, starfish as 5-pointed forms, crabs as scuttling creatures.
+- Elements of the same type placed near each other should feel like a colony/group.
+- Different elements near each other should show visual connections (light threads, energy arcs, symbiotic links).
+- Add ambient effects: floating particles, light rays from above, gentle current lines, tiny bubbles rising.
+- Use CSS @keyframes animations: elements should sway, pulse, float, breathe. The scene must feel ALIVE.
+- Use the element colors prominently — the color palette should reflect what the human chose.
+- Include a subtle footer: "由一个人类和一只龙虾共同创造"
+- This is the VISUAL CLIMAX of the entire experience. Make it 惊艳 (stunning). Push every CSS boundary.`;
+
+  const userPrompt = `${epochPrompt}
+
+Generate TWO things separated by the exact marker ===DESCRIPTION===:
+1. First: The complete HTML page (raw HTML starting with <!DOCTYPE html>, no code fences)
+2. Then on its own line: ===DESCRIPTION===
+3. Then: A 1-2 sentence poetic description of the ecosystem you created. Write as the lobster character — sarcastic but genuine. Write in Chinese.`;
+
+  const response = await callLLM(SYSTEM_PROMPT, userPrompt);
+  const text = response.text;
+  const separatorIdx = text.indexOf('===DESCRIPTION===');
+
+  let html: string;
+  let description: string;
+
+  if (separatorIdx >= 0) {
+    html = text.slice(0, separatorIdx).trim();
+    description = text.slice(separatorIdx + '===DESCRIPTION==='.length).trim();
+  } else {
+    html = text.trim();
+    description = '龙虾默默凝视着这个生态系统。';
+  }
+
+  html = html.replace(/^```html?\s*/i, '').replace(/\s*```\s*$/, '');
+
+  if (!html.startsWith('<!DOCTYPE') && !html.startsWith('<html')) {
+    const docIdx = html.indexOf('<!DOCTYPE');
+    const htmlIdx = html.indexOf('<html');
+    const startIdx = docIdx >= 0 ? docIdx : htmlIdx;
+    if (startIdx > 0) {
+      html = html.slice(startIdx);
+    }
+  }
+
+  return { html, description };
+}
+
 export async function callLLMRender(
   epoch: number,
   grid: unknown[][],

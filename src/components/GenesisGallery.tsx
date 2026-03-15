@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { EpochResult, GridMode } from '../types';
 import { epochConfigs } from '../epochConfigs';
-import { audioEngine } from '../audio';
 import { GridPreview, PixelArtPreview } from './GridPreview';
 
 type ViewMode = 'renders' | 'drawings';
@@ -30,17 +29,13 @@ export function GenesisGallery({ results, onRestart, gameState }: GenesisGallery
   const [viewMode, setViewMode] = useState<ViewMode>('renders');
   const [selectedDrawing, setSelectedDrawing] = useState<DrawingEntry | null>(null);
 
-  useEffect(() => {
-    audioEngine.triggerGenesis();
-  }, []);
-
   // Collect all user drawings
   const drawings: DrawingEntry[] = [];
   for (const result of results) {
     if (result.userGrid && result.gridMode && result.gridWidth && result.gridHeight) {
       const config = epochConfigs.find(c => c.epoch === result.epoch);
       drawings.push({
-        label: config?.title ?? `EPOCH ${result.epoch}`,
+        label: config?.title ?? `纪元 ${result.epoch}`,
         epoch: result.epoch,
         type: 'grid',
         grid: result.userGrid,
@@ -53,7 +48,6 @@ export function GenesisGallery({ results, onRestart, gameState }: GenesisGallery
   // Add Epoch3 pixel art from gameState
   const pixelArt = gameState?.epoch3?.pixelArt as (string | null)[] | undefined;
   if (pixelArt && pixelArt.length === 64) {
-    // Convert flat array to 2D for consistency in the drawing entry
     const grid2D: (string | null)[][] = [];
     for (let r = 0; r < 8; r++) {
       grid2D.push(pixelArt.slice(r * 8, r * 8 + 8));
@@ -67,6 +61,8 @@ export function GenesisGallery({ results, onRestart, gameState }: GenesisGallery
       height: 8,
     });
   }
+  // Sort by epoch so pixel art appears with Epoch 3, not after Epoch 4
+  drawings.sort((a, b) => a.epoch - b.epoch);
 
   const selectedResult = selectedEpoch !== null ? results.find(r => r.epoch === selectedEpoch) : null;
 
@@ -126,11 +122,11 @@ export function GenesisGallery({ results, onRestart, gameState }: GenesisGallery
 
   // Genesis Record scroll view
   if (showGenesisRecord && gameState) {
-    const worldName = gameState.epoch4?.worldName || 'UNKNOWN';
+    const worldName = gameState.epoch4?.worldName || '未知';
     const motto = gameState.epoch4?.chosenMotto || '';
     const shapeNames = gameState.epoch2?.shapeNames || [];
-    const ruleName = gameState.epoch2?.chosenRule?.label || 'Unknown';
-    const interpretation = gameState.epoch3?.interpretation || 'an abstract shape';
+    const ruleName = gameState.epoch2?.chosenRule?.label || '未知';
+    const interpretation = gameState.epoch3?.interpretation || '抽象形状';
     const itemCount = gameState.epoch4?.placedItems?.length || 0;
 
     return (
@@ -258,7 +254,7 @@ export function GenesisGallery({ results, onRestart, gameState }: GenesisGallery
                   />
                 </div>
                 <div className="gallery-card-label">
-                  <div className="text-[8px] text-green-400">{config?.title ?? `EPOCH ${result.epoch}`}</div>
+                  <div className="text-[8px] text-green-400">{config?.title ?? `纪元 ${result.epoch}`}</div>
                   <div className="text-[7px] text-gray-500 mt-1 line-clamp-2">{result.description}</div>
                 </div>
               </div>

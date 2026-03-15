@@ -1,6 +1,20 @@
 import type { GridMode, Connection } from '../types';
 import { TEXT_SYMBOLS } from '../epochConfigs';
 
+const ANIMATION_LABELS: Record<string, string> = {
+  pulse: '脉冲', spin: '旋转', float: '漂浮',
+  shake: '震动', glow: '发光', fade: '渐变',
+};
+
+const CONNECTION_LABELS: Record<string, string> = {
+  bond: '纽带', flow: '流动', conflict: '冲突',
+};
+
+const SHAPE_LABELS: Record<string, string> = {
+  circle: '圆形', square: '方形', triangle: '三角',
+  diamond: '菱形', star: '星形',
+};
+
 interface GridToolbarProps {
   mode: GridMode;
   selectedColor: string;
@@ -110,7 +124,7 @@ export function GridToolbar({
               key={shape}
               className={`shape-btn ${selectedShape === shape ? 'shape-active' : ''}`}
               onClick={() => setSelectedShape(shape)}
-              title={shape}
+              title={SHAPE_LABELS[shape] || shape}
             >
               <ShapeIcon shape={shape} color="#fff" size={12} />
             </button>
@@ -127,7 +141,7 @@ export function GridToolbar({
               className={`tool-btn tool-btn-sm ${selectedAnimation === anim ? 'tool-active' : ''}`}
               onClick={() => setSelectedAnimation(anim)}
             >
-              {anim.slice(0, 3)}
+              {ANIMATION_LABELS[anim] || anim}
             </button>
           ))}
         </div>
@@ -142,7 +156,7 @@ export function GridToolbar({
               className={`tool-btn tool-btn-sm ${connectionType === type ? 'tool-active' : ''}`}
               onClick={() => setConnectionType(type)}
             >
-              {type}
+              {CONNECTION_LABELS[type] || type}
             </button>
           ))}
         </div>
