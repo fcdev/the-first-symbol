@@ -19,6 +19,8 @@
 
 We ask today: when language itself evolves, what happens to the boundaries of our world?
 
+### [**在线体验 Play Now →**](https://gapp.so/the-first-symbol)
+
 </div>
 
 ---
@@ -104,6 +106,12 @@ We ask today: when language itself evolves, what happens to the boundaries of ou
 
 ---
 
+## 在线体验
+
+无需安装，直接在浏览器中游玩：**[gapp.so/the-first-symbol](https://gapp.so/the-first-symbol)**
+
+---
+
 ## 本地运行
 
 **前置条件:** Node.js
@@ -112,9 +120,9 @@ We ask today: when language itself evolves, what happens to the boundaries of ou
 # 安装依赖
 npm install
 
-# 配置 API Key（至少一个）
+# 配置 API Key
 cp .env.example .env.local
-# 编辑 .env.local，填入 OPENAI_API_KEY 或 GEMINI_API_KEY
+# 编辑 .env.local，填入 VITE_GEMINI_API_KEY
 
 # 启动开发服务器（端口 3000）
 npm run dev
@@ -124,9 +132,7 @@ npm run dev
 
 | 变量 | 说明 |
 |------|------|
-| `OPENAI_API_KEY` | OpenAI API Key（默认） |
-| `GEMINI_API_KEY` | Google Gemini API Key（备选） |
-| `LLM_PROVIDER` | 可选：`"openai"` 或 `"gemini"` |
+| `VITE_GEMINI_API_KEY` | Google Gemini API Key |
 
 ---
 
@@ -136,7 +142,7 @@ npm run dev
 - **Vite** — 构建与开发服务器
 - **Tailwind CSS v4** — 样式系统
 - **Web Audio API** — 生成式音景引擎
-- **OpenAI / Gemini API** — AI 渲染与生成
+- **Gemini API** — AI 渲染与生成
 
 ---
 
@@ -221,6 +227,12 @@ This is **The First Symbol**.
 
 ---
 
+## Play Online
+
+No installation needed — play directly in your browser: **[gapp.so/the-first-symbol](https://gapp.so/the-first-symbol)**
+
+---
+
 ## Local Development
 
 **Prerequisites:** Node.js
@@ -229,9 +241,9 @@ This is **The First Symbol**.
 # Install dependencies
 npm install
 
-# Configure API Key (at least one)
+# Configure API Key
 cp .env.example .env.local
-# Edit .env.local, add OPENAI_API_KEY or GEMINI_API_KEY
+# Edit .env.local, add VITE_GEMINI_API_KEY
 
 # Start dev server (port 3000)
 npm run dev
@@ -241,9 +253,7 @@ npm run dev
 
 | Variable | Description |
 |----------|-------------|
-| `OPENAI_API_KEY` | OpenAI API Key (default) |
-| `GEMINI_API_KEY` | Google Gemini API Key (fallback) |
-| `LLM_PROVIDER` | Optional: `"openai"` or `"gemini"` |
+| `VITE_GEMINI_API_KEY` | Google Gemini API Key |
 
 ---
 
@@ -253,7 +263,7 @@ npm run dev
 - **Vite** — Build & dev server
 - **Tailwind CSS v4** — Styling system
 - **Web Audio API** — Generative soundscape engine
-- **OpenAI / Gemini API** — AI rendering & generation
+- **Gemini API** — AI rendering & generation
 
 ---
 

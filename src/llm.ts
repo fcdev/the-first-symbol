@@ -1,69 +1,55 @@
-import OpenAI from 'openai';
-import { GoogleGenAI } from '@google/genai';
 import type { GridMode, Connection } from './types';
 import { serializeGrid } from './gridUtils';
-
-type LLMProvider = 'openai' | 'gemini';
 
 interface LLMResponse {
   text: string;
 }
 
-const openaiKey = typeof process !== 'undefined' ? (process.env?.OPENAI_API_KEY ?? '') : '';
-const geminiKey = typeof process !== 'undefined' ? (process.env?.GEMINI_API_KEY ?? '') : '';
-const providerOverride = typeof process !== 'undefined' ? (process.env?.LLM_PROVIDER ?? '') : '';
+const GEMINI_ENDPOINT = '/api/ai/gemini';
+const MODEL_PATH = '/v1beta/models/gemini-2.5-flash:generateContent';
 
-function detectProvider(): LLMProvider {
-  if (providerOverride === 'gemini' || providerOverride === 'openai') {
-    return providerOverride;
+function isGappProxy(): boolean {
+  return typeof (window as any).gapp !== 'undefined' && !(window as any).gapp.__mock;
+}
+
+async function callLLM(systemPrompt: string, userPrompt: string): Promise<LLMResponse> {
+  // Use gapp.so proxy when available (production on gapp.so)
+  if (isGappProxy()) {
+    const res = await fetch(GEMINI_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        path: MODEL_PATH,
+        contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        generationConfig: { maxOutputTokens: 65536, temperature: 0.9 },
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Gemini API error: ${res.status}`);
+    }
+
+    const data = await res.json();
+    return { text: data.candidates?.[0]?.content?.parts?.[0]?.text ?? '' };
   }
-  if (openaiKey) return 'openai';
-  if (geminiKey) return 'gemini';
-  return 'openai';
-}
 
-let _openaiClient: OpenAI | null = null;
-function getOpenAIClient() {
-  return _openaiClient ??= new OpenAI({ apiKey: openaiKey, dangerouslyAllowBrowser: true });
-}
-
-let _geminiClient: InstanceType<typeof GoogleGenAI> | null = null;
-function getGeminiClient() {
-  return _geminiClient ??= new GoogleGenAI({ apiKey: geminiKey });
-}
-
-async function callOpenAI(system: string, user: string): Promise<LLMResponse> {
-  const client = getOpenAIClient();
-  const response = await client.chat.completions.create({
-    model: 'gpt-5.4',
-    messages: [
-      { role: 'system', content: system },
-      { role: 'user', content: user },
-    ],
-    max_completion_tokens: 128000,
-  });
-  return { text: response.choices[0]?.message?.content ?? '' };
-}
-
-async function callGemini(system: string, user: string): Promise<LLMResponse> {
-  const client = getGeminiClient();
+  // Local dev fallback: use Gemini SDK directly
+  const { GoogleGenAI } = await import('@google/genai');
+  const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || '';
+  if (!apiKey) {
+    throw new Error('No GEMINI_API_KEY configured and gapp.so proxy not available');
+  }
+  const client = new GoogleGenAI({ apiKey });
   const response = await client.models.generateContent({
     model: 'gemini-2.5-flash',
-    contents: user,
+    contents: userPrompt,
     config: {
-      systemInstruction: system,
+      systemInstruction: systemPrompt,
       maxOutputTokens: 65536,
     },
   });
   return { text: response.text ?? '' };
-}
-
-async function callLLM(system: string, user: string): Promise<LLMResponse> {
-  const provider = detectProvider();
-  if (provider === 'gemini') {
-    return callGemini(system, user);
-  }
-  return callOpenAI(system, user);
 }
 
 const SYSTEM_PROMPT = `You are a lobster — a sarcastic, philosophical, surprisingly artistic crustacean. You've been collaborating with a human to create a world from nothing.
